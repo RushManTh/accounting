@@ -3,12 +3,23 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import skudata from "@/app/skudata.json";
+import skudataPowerder from "@/app/skudataPowder.json";
 
 export default function Home() {
   const [file1Data, setFile1Data] = useState([]);
   const [file2Data, setFile2Data] = useState([]);
   const [mergedData, setMergedData] = useState([]);
   const [adsCost, setAdsCost] = useState(0);
+  const [selected, setSelected] = useState(1);
+
+  const options = [
+    { id: 1, label: "น้ำพริกปูม้า" },
+    { id: 2, label: "แป้งหมักไก่" },
+  ];
+
+  const handleSelectSkuType = (id) => {
+    setSelected((prev) => (prev === id ? null : id));
+  }
 
   const handleFileUpload = (e, setFileData) => {
     const file = e.target.files[0];
@@ -94,8 +105,10 @@ export default function Home() {
           return null;
         }
 
-        // ตรวจสอบว่า SKU ID มีข้อมูลหรือไม่
-        const skuMatched = skudata.find(
+        
+        const skuMatched = selected === 1 ? skudata.find(
+          (sku) => String(sku.skuID) === String(row2["SKU ID"])
+        ) : skudataPowerder.find(
           (sku) => String(sku.skuID) === String(row2["SKU ID"])
         );
 
@@ -158,10 +171,25 @@ export default function Home() {
     }, 0)
     .toFixed(2);
 
+    console.log(selected);
+
   return (
     <div className="relative overflow-x-auto overflow-y-auto">
       <div className="flex justify-center items-center mt-5">
         <h1 className="text-2xl font-bold">ระบบคำนวณรายได้จาก TikTok</h1>
+      </div>
+
+      <div className=" flex justify-center items-center mt-9 mb-9">
+      {options.map((option) => (
+        <label key={option.id} style={{ display: "block", marginBottom: "8px" }}>
+          <input
+            type="checkbox"
+            checked={selected === option.id}
+            onChange={() => handleSelectSkuType(option.id)}
+          />
+          {option.label}
+        </label>
+      ))}
       </div>
 
       <div className=" flex justify-center items-center mt-9 mb-9">
@@ -216,13 +244,13 @@ export default function Home() {
             className="mb-5 text-2xl"
             style={{ color: totalNet < 1 ? "red" : "green" }}
           >
-            {parseFloat(totalNet).toFixed(2)}
+              {Number(parseFloat(totalNet).toFixed(2)).toLocaleString('en-US')}
           </h2>
         </div>
         <div className="flex flex-col justify-center items-center mt-5 text-xl">
           <h2 className="mb-2 ">ค่าภาษี Vat 7% ฿</h2>
           <h2 className="mb-5 text-2xl" style={{ color: "red" }}>
-            {parseFloat(totalVat).toFixed(2)}
+          {Number(parseFloat(totalVat).toFixed(2)).toLocaleString('en-US')}
           </h2>
         </div>
       </div>
