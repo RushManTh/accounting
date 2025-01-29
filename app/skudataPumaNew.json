@@ -1,0 +1,247 @@
+[
+  {
+    "skuID": "1730140196579740398",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894945385286382",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140101620173550",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730108376961813230",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140101620239086",
+    "meatPuma": 2,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730108376961878766",
+    "meatPuma": 2,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196579609326",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140093195455214",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894945385351918",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140093195520750",
+    "meatPuma": 0,
+    "eggsPuma": 2,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196579674862",
+    "meatPuma": 0,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140080172403438",
+    "meatPuma": 0,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894945385417454",
+    "meatPuma": 0,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140080172468974",
+    "meatPuma": 0,
+    "eggsPuma": 0,
+    "fatPuma": 2,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196579805934",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730974503572900590",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140324643965678",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196579871470",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730974503572966126",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196579937006",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730974503573031662",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730176656662366958",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894940447607534",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894940447673070",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730833717595048686",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730140196580002542",
+    "meatPuma": 2,
+    "eggsPuma": 2,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730833717595114222",
+    "meatPuma": 2,
+    "eggsPuma": 2,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1730833633974717166",
+    "meatPuma": 3,
+    "eggsPuma": 3,
+    "fatPuma": 3,
+    "cost": 0
+  },
+  {
+    "skuID": "1730833717595179758",
+    "meatPuma": 3,
+    "eggsPuma": 3,
+    "fatPuma": 3,
+    "cost": 0
+  },
+  {
+    "skuID": "1730894940447410926",
+    "meatPuma": 2,
+    "eggsPuma": 2,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1731065927271287534",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1731069324310776558",
+    "meatPuma": 0,
+    "eggsPuma": 1,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1731069521558276846",
+    "meatPuma": 1,
+    "eggsPuma": 1,
+    "fatPuma": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1731184442026068718",
+    "meatPuma": 0,
+    "eggsPuma": 0,
+    "fatPuma": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1731184607116036846",
+    "meatPuma": 1,
+    "eggsPuma": 0,
+    "fatPuma": 0,
+    "cost": 0
+  }
+]

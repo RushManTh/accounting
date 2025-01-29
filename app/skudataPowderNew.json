@@ -1,0 +1,142 @@
+[
+  {
+    "skuID": "1729591913483963118",
+    "productName": "หอมเจียวบังลันไก่ทอดหาดใหญ่ 100g",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 1,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729591913484028654",
+    "productName": "หอมเจียวบังลันไก่ทอดหาดใหญ่ 0.5 kg",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 1,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729591916080827118",
+    "productName": "หอมเจียวบังลันไก่ทอดหาดใหญ่ 1 kg",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 2,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729591916824595182",
+    "productName": "หอมเจียวบังลันไก่ทอดหาดใหญ่ 100g",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 1,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729591916824726254",
+    "productName": "หอมเจียวบังลันไก่ทอดหาดใหญ่ 1 kg",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 2,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729599572365052654",
+    "productName": "น้ำจิ้มไก่",
+    "powderMini": 0,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1729599572365118190",
+    "productName": "แป้งหมักไก่ขนาด 120g 1 ซอง 50฿",
+    "powderMini": 1,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729599572365183726",
+    "productName": "เซ็ททดลอง 169฿",
+    "powderMini": 2,
+    "powderMedium": 0,
+    "onionsMini": 1,
+    "onionsMedium": 0,
+    "sauce": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1729604811026172654",
+    "productName": "แป้งหมักไก่ 3 ถุง 150",
+    "powderMini": 3,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729607702708128494",
+    "productName": "แป้งหมักไก่ 3 ถุง 150",
+    "powderMini": 3,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729607702708194030",
+    "productName": "เซ็ททดลอง 169฿",
+    "powderMini": 2,
+    "powderMedium": 0,
+    "onionsMini": 1,
+    "onionsMedium": 0,
+    "sauce": 1,
+    "cost": 0
+  },
+  {
+    "skuID": "1729607702708259566",
+    "productName": "แป้ง 4 ถุง 189-.",
+    "powderMini": 4,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729610262725561070",
+    "productName": "แป้ง 8 ถุง",
+    "powderMini": 8,
+    "powderMedium": 0,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  },
+  {
+    "skuID": "1729725680874523374",
+    "productName": "แป้ง 5 kg",
+    "powderMini": 0,
+    "powderMedium": 10,
+    "onionsMini": 0,
+    "onionsMedium": 0,
+    "sauce": 0,
+    "cost": 0
+  }
+]

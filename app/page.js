@@ -3,7 +3,9 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import skudata from "@/app/skudata.json";
+import skudataPumaNew from "@/app/skudataPumaNew.json";
 import skudataPowerder from "@/app/skudataPowder.json";
+import skudataPowderNew from "@/app/skudataPowderNew.json";
 
 export default function Home() {
   const [file1Data, setFile1Data] = useState([]);
@@ -11,15 +13,68 @@ export default function Home() {
   const [mergedData, setMergedData] = useState([]);
   const [adsCost, setAdsCost] = useState(0);
   const [selected, setSelected] = useState(1);
+  const [pumaMeat, setPumaMeat] = useState(0);
+  const [pumaEggs, setPumaEggs] = useState(0);
+  const [pumaFat, setPumaFat] = useState(0);
+  const [powderMini, setPowderMini] = useState(0);
+  const [powderMedium, setPowderMedium] = useState(0);
+  const [onionsMini, setOnionsMini] = useState(0);
+  const [onionsMedium, setOnionsMedium] = useState(0);
+  const [sauce, setSauce] = useState(0);
 
   const options = [
     { id: 1, label: "น้ำพริกปูม้า" },
     { id: 2, label: "แป้งหมักไก่" },
   ];
 
+  const calculateCost = (data, pumaMeat, pumaEggs, pumaFat) => {
+    if (pumaMeat <= 0 || pumaEggs <= 0 || pumaFat <= 0) {
+      alert("โปรดเติมต้นทุนของสินค้าก่อนคำนวณ");
+      return;
+    }
+
+    return data.map((item) => ({
+      ...item,
+      cost:
+        item.meatPuma * pumaMeat +
+        item.eggsPuma * pumaEggs +
+        item.fatPuma * pumaFat,
+    }));
+  };
+
+  const calculateCostPowder = (
+    data,
+    powderMini,
+    powderMedium,
+    onionsMini,
+    onionsMedium,
+    sauce
+  ) => {
+    if (
+      powderMini <= 0 ||
+      powderMedium <= 0 ||
+      onionsMini <= 0 ||
+      onionsMedium <= 0 ||
+      sauce <= 0
+    ) {
+      alert("โปรดเติมต้นทุนของสินค้าก่อนคำนวณ");
+      return;
+    }
+
+    return data.map((item) => ({
+      ...item,
+      cost:
+        item.powderMini * powderMini +
+        item.powderMedium * powderMedium +
+        item.onionsMini * onionsMini +
+        item.onionsMedium * onionsMedium +
+        item.sauce * sauce,
+    }));
+  };
+
   const handleSelectSkuType = (id) => {
     setSelected((prev) => (prev === id ? null : id));
-  }
+  };
 
   const handleFileUpload = (e, setFileData) => {
     const file = e.target.files[0];
@@ -87,6 +142,22 @@ export default function Home() {
     console.log("File2 Data:", file2Data);
     console.log("SKU Data:", skudata);
 
+    const skuPumaUpdateCost = calculateCost(
+      skudataPumaNew,
+      pumaMeat,
+      pumaEggs,
+      pumaFat
+    );
+
+    const skuPowderUpdateCost = calculateCostPowder(
+      skudataPowderNew,
+      powderMini,
+      powderMedium,
+      onionsMini,
+      onionsMedium,
+      sauce
+    );
+
     const preparedFile1Data = prepareFile1Data(file1Data);
 
     console.log("PrepareFile1", preparedFile1Data);
@@ -105,12 +176,14 @@ export default function Home() {
           return null;
         }
 
-        
-        const skuMatched = selected === 1 ? skudata.find(
-          (sku) => String(sku.skuID) === String(row2["SKU ID"])
-        ) : skudataPowerder.find(
-          (sku) => String(sku.skuID) === String(row2["SKU ID"])
-        );
+        const skuMatched =
+          selected === 1
+            ? skuPumaUpdateCost.find(
+                (sku) => String(sku.skuID) === String(row2["SKU ID"])
+              )
+            : skuPowderUpdateCost.find(
+                (sku) => String(sku.skuID) === String(row2["SKU ID"])
+              );
 
         if (!skuMatched) {
           console.log(`ไม่พบการจับคู่สำหรับ SKU ID: ${row2["SKU ID"]}`);
@@ -171,7 +244,7 @@ export default function Home() {
     }, 0)
     .toFixed(2);
 
-    console.log(selected);
+  console.log(selected);
 
   return (
     <div className="relative overflow-x-auto overflow-y-auto">
@@ -180,16 +253,129 @@ export default function Home() {
       </div>
 
       <div className=" flex justify-center items-center mt-9 mb-9">
-      {options.map((option) => (
-        <label key={option.id} style={{ display: "block", marginBottom: "8px" }}>
-          <input
-            type="checkbox"
-            checked={selected === option.id}
-            onChange={() => handleSelectSkuType(option.id)}
-          />
-          {option.label}
-        </label>
-      ))}
+        {options.map((option) => (
+          <label
+            key={option.id}
+            style={{
+              display: "block",
+              marginBottom: "8px",
+              marginRight: "20px",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={selected === option.id}
+              onChange={() => handleSelectSkuType(option.id)}
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+
+      <div className=" flex flex-col justify-center items-center mt-9 mb-9">
+        <h2 className="mb-3">ต้นทุนสินค้า</h2>
+        <div className="grid grid-cols-2 gap-5">
+          <div className="border border-black rounded-lg p-10">
+            <div className=" flex justify-between ">
+              <h3 className="mr-3">น้ำพริกเนื้อปู : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={pumaMeat}
+                type="number"
+                onChange={(e) => {
+                  setPumaMeat(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">น้ำพริกไข่ปู : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={pumaEggs}
+                type="number"
+                onChange={(e) => {
+                  setPumaEggs(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">น้ำพริกมันปู : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={pumaFat}
+                type="number"
+                onChange={(e) => {
+                  setPumaFat(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+          </div>
+          <div className="border border-black rounded-lg p-10">
+            <div className=" flex justify-between ">
+              <h3 className="mr-3">แป้งหมักไก่ 120G : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={powderMini}
+                type="number"
+                onChange={(e) => {
+                  setPowderMini(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">แป้งหมักไก่ 0.5KG : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={powderMedium}
+                type="number"
+                onChange={(e) => {
+                  setPowderMedium(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">หอมเจียว 100G : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={onionsMini}
+                type="number"
+                onChange={(e) => {
+                  setOnionsMini(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">หอมเจียว 500G : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={onionsMedium}
+                type="number"
+                onChange={(e) => {
+                  setOnionsMedium(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+            <div className="mt-2 flex justify-between ">
+              <h3 className="mr-3">น้ำจิ้มไก่ : </h3>
+              <input
+                placeholder="ป้อนต้นทุนน้ำพริกเนื้อปู"
+                value={sauce}
+                type="number"
+                onChange={(e) => {
+                  setSauce(e.target.value);
+                }}
+                className="border w-[100px] rounded-lg "
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className=" flex justify-center items-center mt-9 mb-9">
@@ -244,13 +430,13 @@ export default function Home() {
             className="mb-5 text-2xl"
             style={{ color: totalNet < 1 ? "red" : "green" }}
           >
-              {Number(parseFloat(totalNet).toFixed(2)).toLocaleString('en-US')}
+            {Number(parseFloat(totalNet).toFixed(2)).toLocaleString("en-US")}
           </h2>
         </div>
         <div className="flex flex-col justify-center items-center mt-5 text-xl">
           <h2 className="mb-2 ">ค่าภาษี Vat 7% ฿</h2>
           <h2 className="mb-5 text-2xl" style={{ color: "red" }}>
-          {Number(parseFloat(totalVat).toFixed(2)).toLocaleString('en-US')}
+            {Number(parseFloat(totalVat).toFixed(2)).toLocaleString("en-US")}
           </h2>
         </div>
       </div>
