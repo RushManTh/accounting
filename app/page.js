@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import skudata from "@/app/skudata.json";
 import skudataPumaNew from "@/app/skudataPumaNew.json";
-import skudataPowerder from "@/app/skudataPowder.json";
 import skudataPowderNew from "@/app/skudataPowderNew.json";
 
 export default function Home() {
@@ -21,6 +20,26 @@ export default function Home() {
   const [onionsMini, setOnionsMini] = useState(0);
   const [onionsMedium, setOnionsMedium] = useState(0);
   const [sauce, setSauce] = useState(0);
+  const [skudataPumaNew, setSkudataPumaNew] = useState([]);
+  const [skudataPowderNew, setSkudataPowderNew] = useState([]);
+
+  useEffect(() => {
+    fetch(
+      "https://script.google.com/macros/s/AKfycby1vjgSkNH6df-1aihmTQGhKuQ-9H4pfZJBw8Z9-h8YlwTJe6GAuRMYwEQGI7jVwPTP2w/exec"
+    )
+      .then((res) => res.json())
+      .then((data) => setSkudataPumaNew(data))
+      .catch((err) => console.error("Error fetching data:", err));
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      "https://script.google.com/macros/s/AKfycbzkCpXud9vmQYvyUaFU6UWWxz1eeEZue0dMNzZCoJ1zKvCh-9Z1SQ-2t6NYFTWQ-9RR/exec"
+    )
+      .then((res) => res.json())
+      .then((data) => setSkudataPowderNew(data))
+      .catch((err) => console.error("Error fetching data:", err));
+  }, []);
 
   const options = [
     { id: 1, label: "น้ำพริกปูม้า" },
