@@ -10,6 +10,7 @@ export default function Home() {
   const [file1Data, setFile1Data] = useState([]);
   const [file2Data, setFile2Data] = useState([]);
   const [mergedData, setMergedData] = useState([]);
+  const [boxCost, setBoxCost] = useState([]);
   const [adsCost, setAdsCost] = useState(0);
   const [selected, setSelected] = useState(1);
   const [pumaMeat, setPumaMeat] = useState(0);
@@ -44,6 +45,7 @@ export default function Home() {
   const options = [
     { id: 1, label: "น้ำพริกปูม้า" },
     { id: 2, label: "แป้งหมักไก่" },
+    { id: 3, label: "ทั้งหมด" },
   ];
 
   const calculateCost = (data, pumaMeat, pumaEggs, pumaFat) => {
@@ -192,11 +194,21 @@ export default function Home() {
 
         if (!matchedRow) {
           console.log(`ไม่พบการจับคู่สำหรับ Order ID: ${row2["Order ID"]}`);
-          return null;
+          return null; // ถ้าไม่พบการจับคู่ ให้คืนค่า null
         }
 
+        // ตรวจสอบและจับคู่ SKU ID
         const skuMatched =
-          selected === 1
+          selected === 3
+            ? [
+                ...skuPumaUpdateCost.filter(
+                  (sku) => String(sku.skuID) === String(row2["SKU ID"])
+                ),
+                ...skuPowderUpdateCost.filter(
+                  (sku) => String(sku.skuID) === String(row2["SKU ID"])
+                ),
+              ]
+            : selected === 1
             ? skuPumaUpdateCost.find(
                 (sku) => String(sku.skuID) === String(row2["SKU ID"])
               )
@@ -204,19 +216,28 @@ export default function Home() {
                 (sku) => String(sku.skuID) === String(row2["SKU ID"])
               );
 
-        if (!skuMatched) {
+        // ตรวจสอบว่า skuMatched มีค่าไหม
+        if (
+          !skuMatched ||
+          (Array.isArray(skuMatched) && skuMatched.length === 0)
+        ) {
           console.log(`ไม่พบการจับคู่สำหรับ SKU ID: ${row2["SKU ID"]}`);
-          return null;
+          return null; // ถ้าไม่พบ SKU ก็ให้คืนค่า null
         }
+
+        // ถ้า selected === 3 และพบหลายรายการใน skuMatched ให้ใช้ค่าแรกจากรายการ
+        const skuCost = Array.isArray(skuMatched)
+          ? skuMatched[0].cost
+          : skuMatched.cost;
 
         // เพิ่มข้อมูล cost จาก skudata
         return {
           ...row2,
           "Total settlement amount": matchedRow["Total settlement amount"],
-          Cost: skuMatched.cost, // เพิ่ม cost จาก skudata
+          Cost: skuCost, // เพิ่ม cost จาก skudata
         };
       })
-      .filter((row) => row !== null); // ลบแถวที่ไม่มีการจับคู่ (null) ออก
+      .filter((result) => result !== null); // กรองค่าที่เป็น null ออก
 
     // รวมข้อมูล Order ID ที่ซ้ำกัน โดยรวม SKU และ Cost ตาม Order ID
     const reducedData = merged.reduce((acc, row) => {
@@ -442,6 +463,18 @@ export default function Home() {
           className=" border "
         />
       </div>
+      <div className="flex flex-col justify-center items-center mt-5 text-xl">
+        <h2 className="mb-2">ค่ากล่อง+ค่าแพ็ค ฿</h2>
+        <input
+          placeholder="ค่ากล่อง+ค่าแพ็ค"
+          value={boxCost}
+          type="number"
+          onChange={(e) => {
+            setBoxCost(e.target.value);
+          }}
+          className=" border "
+        />
+      </div>
       <div className="flex justify-center items-center">
         <div className="flex flex-col justify-center items-center mt-5 mr-[200px] text-xl">
           <h2 className="mb-2 ">กำไรสุทธิ ฿</h2>
@@ -449,7 +482,9 @@ export default function Home() {
             className="mb-5 text-2xl"
             style={{ color: totalNet < 1 ? "red" : "green" }}
           >
-            {Number(parseFloat(totalNet).toFixed(2)).toLocaleString("en-US")}
+            {Number(parseFloat(totalNet - boxCost).toFixed(2)).toLocaleString(
+              "en-US"
+            )}
           </h2>
         </div>
         <div className="flex flex-col justify-center items-center mt-5 text-xl">
