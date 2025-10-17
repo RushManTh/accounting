@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import skudata from "@/app/skudata.json";
-import skudataPumaNew from "@/app/skudataPumaNew.json";
-import skudataPowderNew from "@/app/skudataPowderNew.json";
-import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const router = useRouter();
+export default function EmployeePage() {
   const [file1Data, setFile1Data] = useState([]);
   const [file2Data, setFile2Data] = useState([]);
   const [mergedData, setMergedData] = useState([]);
@@ -25,24 +21,67 @@ export default function Home() {
   const [sauce, setSauce] = useState(0);
   const [skudataPumaNew, setSkudataPumaNew] = useState([]);
   const [skudataPowderNew, setSkudataPowderNew] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
+  // SKU Form states
+  const [showPumaForm, setShowPumaForm] = useState(false);
+  const [showPowderForm, setShowPowderForm] = useState(false);
+  const [pumaFormData, setPumaFormData] = useState({
+    skuID: "",
+    productName: "",
+    meatPuma: 0,
+    eggsPuma: 0,
+    fatPuma: 0,
+  });
+  const [powderFormData, setPowderFormData] = useState({
+    skuID: "",
+    productName: "",
+    powderMini: 0,
+    powderMedium: 0,
+    onionsMini: 0,
+    onionsMedium: 0,
+    sauce: 0,
+  });
+
+  // Load data from localStorage on component mount
   useEffect(() => {
-    fetch(
-      "https://script.google.com/macros/s/AKfycby1vjgSkNH6df-1aihmTQGhKuQ-9H4pfZJBw8Z9-h8YlwTJe6GAuRMYwEQGI7jVwPTP2w/exec"
-    )
-      .then((res) => res.json())
-      .then((data) => setSkudataPumaNew(data))
-      .catch((err) => console.error("Error fetching data:", err));
+    const savedPumaData = localStorage.getItem("skudataPumaNew");
+    const savedPowderData = localStorage.getItem("skudataPowderNew");
+
+    if (savedPumaData) {
+      try {
+        setSkudataPumaNew(JSON.parse(savedPumaData));
+      } catch (error) {
+        console.error("Error parsing saved Puma data:", error);
+      }
+    }
+
+    if (savedPowderData) {
+      try {
+        setSkudataPowderNew(JSON.parse(savedPowderData));
+      } catch (error) {
+        console.error("Error parsing saved Powder data:", error);
+      }
+    }
+
+    setIsDataLoaded(true);
   }, []);
 
+  // Save to localStorage whenever data changes (only after initial load)
   useEffect(() => {
-    fetch(
-      "https://script.google.com/macros/s/AKfycbzkCpXud9vmQYvyUaFU6UWWxz1eeEZue0dMNzZCoJ1zKvCh-9Z1SQ-2t6NYFTWQ-9RR/exec"
-    )
-      .then((res) => res.json())
-      .then((data) => setSkudataPowderNew(data))
-      .catch((err) => console.error("Error fetching data:", err));
-  }, []);
+    if (isDataLoaded) {
+      localStorage.setItem("skudataPumaNew", JSON.stringify(skudataPumaNew));
+    }
+  }, [skudataPumaNew, isDataLoaded]);
+
+  useEffect(() => {
+    if (isDataLoaded) {
+      localStorage.setItem(
+        "skudataPowderNew",
+        JSON.stringify(skudataPowderNew)
+      );
+    }
+  }, [skudataPowderNew, isDataLoaded]);
 
   const options = [
     { id: 1, label: "น้ำพริกปูม้า" },
@@ -115,10 +154,7 @@ export default function Home() {
 
       workSheetNamesToDelete.forEach((sheetName) => {
         if (workSheetNames.includes(sheetName)) {
-          // ลบ sheet ออกจาก workbook.Sheets
           delete workbook.Sheets[sheetName];
-
-          // ลบชื่อ sheet ออกจาก workbook.SheetNames
           const indexToDelete = workbook.SheetNames.indexOf(sheetName);
           if (indexToDelete !== -1) {
             workbook.SheetNames.splice(indexToDelete, 1);
@@ -128,11 +164,7 @@ export default function Home() {
 
       const firstSheetName = workbook.SheetNames[0];
       const worksheetCP = workbook.Sheets[firstSheetName];
-
-      // แปลง sheet เป็น JSON
       const jsonData = XLSX.utils.sheet_to_json(worksheetCP);
-
-      // ตั้งค่าข้อมูลที่แปลงแล้วไปยัง state
       setFileData(jsonData);
     };
 
@@ -140,17 +172,14 @@ export default function Home() {
   };
 
   const prepareFile1Data = (file1Data) => {
-    // ดึงเฉพาะ sheet แรกมาใช้งาน
     const allSheets = Object.keys(file1Data);
     const firstSheet = file1Data[allSheets[0]];
 
-    // ตรวจสอบและแก้ไขเซลล์ A1 เป็น "Order/adjustment ID"
     if (firstSheet[0] && firstSheet[0][0] !== "Order/adjustment ID") {
-      firstSheet[0][0] = "Order/adjustment ID"; // แก้ไขเซลล์ A1
+      firstSheet[0][0] = "Order/adjustment ID";
       console.log("แก้ไขหัวข้อคอลัมน์ A1 สำเร็จ");
     }
 
-    // คืนค่า sheet ที่แก้ไขแล้ว
     return firstSheet;
   };
 
@@ -160,7 +189,6 @@ export default function Home() {
       return;
     }
 
-    // พิมพ์ข้อมูลออกมาเพื่อตรวจสอบโครงสร้าง
     console.log("File1 Data:", file1Data);
     console.log("File2 Data:", file2Data);
     console.log("SKU Data:", skudata);
@@ -185,10 +213,8 @@ export default function Home() {
 
     console.log("PrepareFile1", preparedFile1Data);
 
-    // รวมข้อมูลที่ตรงกันเท่านั้น
     const merged = file2Data
       .map((row2) => {
-        // ตรวจสอบว่า Order/adjustment ID และ Order ID มีข้อมูลหรือไม่
         const matchedRow = file1Data.find(
           (row1) =>
             String(row1["Order/adjustment ID"]) === String(row2["Order ID"])
@@ -196,10 +222,9 @@ export default function Home() {
 
         if (!matchedRow) {
           console.log(`ไม่พบการจับคู่สำหรับ Order ID: ${row2["Order ID"]}`);
-          return null; // ถ้าไม่พบการจับคู่ ให้คืนค่า null
+          return null;
         }
 
-        // ตรวจสอบและจับคู่ SKU ID
         const skuMatched =
           selected === 3
             ? [
@@ -218,119 +243,436 @@ export default function Home() {
                 (sku) => String(sku.skuID) === String(row2["SKU ID"])
               );
 
-        // ตรวจสอบว่า skuMatched มีค่าไหม
         if (
           !skuMatched ||
           (Array.isArray(skuMatched) && skuMatched.length === 0)
         ) {
           console.log(`ไม่พบการจับคู่สำหรับ SKU ID: ${row2["SKU ID"]}`);
-          return null; // ถ้าไม่พบ SKU ก็ให้คืนค่า null
+          return null;
         }
 
-        // ถ้า selected === 3 และพบหลายรายการใน skuMatched ให้ใช้ค่าแรกจากรายการ
         const skuCost = Array.isArray(skuMatched)
           ? skuMatched[0].cost
           : skuMatched.cost;
 
-        // เพิ่มข้อมูล cost จาก skudata
         return {
           ...row2,
           "Total settlement amount": matchedRow["Total settlement amount"],
-          Cost: skuCost, // เพิ่ม cost จาก skudata
+          Cost: skuCost,
         };
       })
-      .filter((result) => result !== null); // กรองค่าที่เป็น null ออก
+      .filter((result) => result !== null);
 
-    // รวมข้อมูล Order ID ที่ซ้ำกัน โดยรวม SKU และ Cost ตาม Order ID
     const reducedData = merged.reduce((acc, row) => {
       const existingOrder = acc.find(
         (item) => item["Order ID"] === row["Order ID"]
       );
 
       if (existingOrder) {
-        // หากมี Order ID เดียวกัน ให้รวม SKU ID และ Cost
         existingOrder["SKU ID"] += `, ${row["SKU ID"]}`;
-        existingOrder["Cost"] += row.Cost; // รวมค่า Cost ของแต่ละ SKU
+        existingOrder["Cost"] += row.Cost;
       } else {
-        // ถ้าไม่พบ Order ID ใน acc ให้เพิ่มแถวใหม่
         acc.push({ ...row });
       }
 
       return acc;
     }, []);
 
-    // ตรวจสอบผลลัพธ์ที่รวมแล้ว
     console.log("Merged and Reduced Data:", reducedData);
     setMergedData(reducedData);
   };
 
+  // Add Puma SKU
+  const handleAddPumaSku = () => {
+    if (!pumaFormData.skuID || !pumaFormData.productName) {
+      alert("กรุณากรอกข้อมูล SKU ID และชื่อสินค้า");
+      return;
+    }
+
+    const newSku = {
+      skuID: pumaFormData.skuID,
+      productName: pumaFormData.productName,
+      meatPuma: Number(pumaFormData.meatPuma),
+      eggsPuma: Number(pumaFormData.eggsPuma),
+      fatPuma: Number(pumaFormData.fatPuma),
+    };
+
+    setSkudataPumaNew([...skudataPumaNew, newSku]);
+    setPumaFormData({
+      skuID: "",
+      productName: "",
+      meatPuma: 0,
+      eggsPuma: 0,
+      fatPuma: 0,
+    });
+    setShowPumaForm(false);
+  };
+
+  // Add Powder SKU
+  const handleAddPowderSku = () => {
+    if (!powderFormData.skuID || !powderFormData.productName) {
+      alert("กรุณากรอกข้อมูล SKU ID และชื่อสินค้า");
+      return;
+    }
+
+    const newSku = {
+      skuID: powderFormData.skuID,
+      productName: powderFormData.productName,
+      powderMini: Number(powderFormData.powderMini),
+      powderMedium: Number(powderFormData.powderMedium),
+      onionsMini: Number(powderFormData.onionsMini),
+      onionsMedium: Number(powderFormData.onionsMedium),
+      sauce: Number(powderFormData.sauce),
+    };
+
+    setSkudataPowderNew([...skudataPowderNew, newSku]);
+    setPowderFormData({
+      skuID: "",
+      productName: "",
+      powderMini: 0,
+      powderMedium: 0,
+      onionsMini: 0,
+      onionsMedium: 0,
+      sauce: 0,
+    });
+    setShowPowderForm(false);
+  };
+
+  // Delete SKU functions
+  const deletePumaSku = (index) => {
+    const updatedData = skudataPumaNew.filter((_, i) => i !== index);
+    setSkudataPumaNew(updatedData);
+  };
+
+  const deletePowderSku = (index) => {
+    const updatedData = skudataPowderNew.filter((_, i) => i !== index);
+    setSkudataPowderNew(updatedData);
+  };
+
   const totalNet = mergedData.reduce((acc, row) => {
-    // คำนวณผลรวมสำหรับแต่ละแถว
     const rowTotal = parseFloat(
       row["Total settlement amount"] -
         row["Cost"] * row["Quantity"] -
         adsCost / mergedData.length
     ).toFixed(2);
 
-    // รวมผลรวมแต่ละแถวเข้าไปใน accumulator (acc)
     return acc + parseFloat(rowTotal);
   }, 0);
 
   const totalVat = mergedData
     .reduce((acc, row) => {
-      // คำนวณผลรวมสำหรับแต่ละแถว
       const rowTotal = row["Total settlement amount"] * (7 / 100);
-
-      // รวมผลรวมแต่ละแถวเข้าไปใน accumulator (acc)
       return acc + rowTotal;
     }, 0)
     .toFixed(2);
 
   console.log(selected);
 
-  const handleOnClickOpenLiveAccounting = () => {
-    router.push("/live-accounting");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            ระบบคำนวณรายได้จาก TikTok
+            ระบบคำนวณรายได้จาก TikTok (Employee)
           </h1>
           <p className="text-gray-600">
-            ระบบจัดการและคำนวณกำไรจากการขายผ่าน TikTok Shop
+            ระบบจัดการและคำนวณกำไรจากการขายผ่าน TikTok Shop สำหรับพนักงาน
           </p>
         </div>
-        <div className="flex justify-center items-center mb-8">
-          <button
-            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-bold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-            onClick={handleOnClickOpenLiveAccounting}
-          >
-            ระบบคำนวนสำหรับจ้างไลฟ์
-          </button>
-        </div>
-        <div className="flex justify-center items-center mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-              ไฟล์ SKU ที่ใช้คำนวณต้นทุน
+
+        {/* SKU Management Section */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              จัดการข้อมูล SKU
             </h2>
-            <div className="flex gap-6">
-              <a
-                className="bg-gray-300 hover:bg-gray-200 cursor-pointer text-gray-800 font-semibold py-2 px-4 rounded-lg"
-                href="https://docs.google.com/spreadsheets/d/1BW7VLW6JKd018lxC6mIexBRInXbqfOqC/edit?usp=sharing&ouid=111456717770293859545&rtpof=true&sd=true"
-                target="_blank"
-              >
-                ไฟล์ SKU น้ำพริกปูม้า
-              </a>
-              <a
-                className="bg-gray-300 hover:bg-gray-200 cursor-pointer text-gray-800 font-semibold py-2 px-4 rounded-lg"
-                href="https://docs.google.com/spreadsheets/d/1SOG8f9qPFCIcd5rhIp_T94ymb7XSPQNT/edit?usp=sharing&ouid=111456717770293859545&rtpof=true&sd=true"
-                target="_blank"
-              >
-                ไฟล์ SKU แป้งหมักไก่
-              </a>
+            <p className="text-gray-600">
+              เพิ่มและจัดการข้อมูล SKU สำหรับการคำนวณต้นทุน
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Puma SKU Management */}
+            <div className="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 rounded-xl p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-orange-800">
+                  น้ำพริกปูม้า SKU
+                </h3>
+                <button
+                  onClick={() => setShowPumaForm(!showPumaForm)}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                >
+                  เพิ่ม SKU
+                </button>
+              </div>
+
+              {showPumaForm && (
+                <div className="bg-white rounded-lg p-4 mb-4 border border-orange-300">
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <input
+                      type="text"
+                      placeholder="SKU ID"
+                      value={pumaFormData.skuID}
+                      onChange={(e) =>
+                        setPumaFormData({
+                          ...pumaFormData,
+                          skuID: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="text"
+                      placeholder="ชื่อสินค้า"
+                      value={pumaFormData.productName}
+                      onChange={(e) =>
+                        setPumaFormData({
+                          ...pumaFormData,
+                          productName: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <input
+                      type="number"
+                      placeholder="เนื้อปู"
+                      value={pumaFormData.meatPuma}
+                      onChange={(e) =>
+                        setPumaFormData({
+                          ...pumaFormData,
+                          meatPuma: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="ไข่ปู"
+                      value={pumaFormData.eggsPuma}
+                      onChange={(e) =>
+                        setPumaFormData({
+                          ...pumaFormData,
+                          eggsPuma: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="มันปู"
+                      value={pumaFormData.fatPuma}
+                      onChange={(e) =>
+                        setPumaFormData({
+                          ...pumaFormData,
+                          fatPuma: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddPumaSku}
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex-1"
+                    >
+                      เพิ่ม
+                    </button>
+                    <button
+                      onClick={() => setShowPumaForm(false)}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1"
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="max-h-60 overflow-y-auto">
+                {skudataPumaNew.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-lg p-3 mb-2 border border-orange-200"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {item.skuID}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {item.productName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          เนื้อปู: {item.meatPuma} | ไข่ปู: {item.eggsPuma} |
+                          มันปู: {item.fatPuma}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deletePumaSku(index)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Powder SKU Management */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-green-800">
+                  แป้งหมักไก่ SKU
+                </h3>
+                <button
+                  onClick={() => setShowPowderForm(!showPowderForm)}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                >
+                  เพิ่ม SKU
+                </button>
+              </div>
+
+              {showPowderForm && (
+                <div className="bg-white rounded-lg p-4 mb-4 border border-green-300">
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <input
+                      type="text"
+                      placeholder="SKU ID"
+                      value={powderFormData.skuID}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          skuID: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="text"
+                      placeholder="ชื่อสินค้า"
+                      value={powderFormData.productName}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          productName: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <input
+                      type="number"
+                      placeholder="แป้ง 120G"
+                      value={powderFormData.powderMini}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          powderMini: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="แป้ง 0.5KG"
+                      value={powderFormData.powderMedium}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          powderMedium: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <input
+                      type="number"
+                      placeholder="หอม 100G"
+                      value={powderFormData.onionsMini}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          onionsMini: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="หอม 500G"
+                      value={powderFormData.onionsMedium}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          onionsMedium: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                    <input
+                      type="number"
+                      placeholder="น้ำจิ้มไก่"
+                      value={powderFormData.sauce}
+                      onChange={(e) =>
+                        setPowderFormData({
+                          ...powderFormData,
+                          sauce: e.target.value,
+                        })
+                      }
+                      className="border rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleAddPowderSku}
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex-1"
+                    >
+                      เพิ่ม
+                    </button>
+                    <button
+                      onClick={() => setShowPowderForm(false)}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex-1"
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="max-h-60 overflow-y-auto">
+                {skudataPowderNew.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-lg p-3 mb-2 border border-green-200"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {item.skuID}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {item.productName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          แป้ง: {item.powderMini}/{item.powderMedium} | หอม:{" "}
+                          {item.onionsMini}/{item.onionsMedium} | จิ้ม:{" "}
+                          {item.sauce}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => deletePowderSku(index)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        ลบ
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
