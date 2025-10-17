@@ -658,9 +658,9 @@ export default function EmployeePage() {
                           {item.productName}
                         </p>
                         <p className="text-xs text-gray-500">
-                          แป้ง: {item.powderMini}/{item.powderMedium} | หอม:{" "}
-                          {item.onionsMini}/{item.onionsMedium} | จิ้ม:{" "}
-                          {item.sauce}
+                          แป้ง 120G:{item.powderMini} | แป้ง 0.5KG:
+                          {item.powderMedium} | หอม 100G:{item.onionsMini} | หอม
+                          500G:{item.onionsMedium} | น้ำจิ้มไก่:{item.sauce}
                         </p>
                       </div>
                       <button
